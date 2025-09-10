@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaui's Content Hub - Built for Thai Seaplane</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #001f3f; /* Deep Blue for Thai Seaplane */
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        /* Parallax Background - CSS Grid Pattern */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #001a33;
+            background-image:
+                repeating-linear-gradient(0deg, #001f3f, #001f3f 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(90deg, #001f3f, #001f3f 1px, transparent 1px, transparent 20px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            z-index: -1;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Custom scrollbar for a techy feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #001a33;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00c4cc; /* Thai Seaplane Teal accent */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #009999;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #1a202c;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+            border: 1px solid #00c4cc;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #fff;
+        }
+        /* Content Section Visibility for Filtering */
+        .content-section {
+            transition: max-height 0.7s ease-out, opacity 0.7s ease-out, margin-bottom 0.7s ease-out;
+            max-height: 2000px;
+            opacity: 1;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        .content-section.hidden-section {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Unique Section Styles */
+        #case-studies .content-card {
+            background-color: #1f2937;
+            border-left: 5px solid #00c4cc;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        #case-studies .content-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+        }
+
+        #webinars .content-card {
+            background-color: #1a202c;
+            border: 1px solid #009999;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        #webinars .content-card:hover {
+            background-color: #2d3748;
+            border-color: #00c4cc;
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        #ebooks .content-card {
+            background-color: #2d3748;
+            border-bottom: 3px solid #63b3ed;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        #ebooks .content-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        #blogs .content-card {
+            background-color: #1a202c;
+            border: 1px dashed #4a5568;
+        }
+        #blogs .content-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            border-color: #00c4cc;
+        }
+        
+        #zaui-clients .client-card {
+            background-color: #1a202c;
+            border: 1px solid #00c4cc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+        #zaui-clients .client-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            background-color: #2d3748;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        #zaui-clients .client-card img {
+            max-width: 120px;
+            height: auto;
+            margin: 0 auto 15px;
+            border-radius: 8px;
+            background-color: #1f2937; /* Dark background for logos */
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #zaui-clients .client-card h4 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #00c4cc;
+            margin-bottom: 10px;
+        }
+        #zaui-clients .client-card p {
+            font-size: 0.95rem;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+        #zaui-clients .client-card a {
+            display: inline-block;
+            background-color: #00c4cc;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        #zaui-clients .client-card a:hover {
+            background-color: #009999;
+        }
+        /* Hero Section Specific Styles */
+        .hero-section {
+            position: relative;
+            background-image: url('https://www.thaiseaplane.com/wp-content/uploads/2023/11/banner-about-home31112023.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 31, 63, 0.7), rgba(0, 31, 63, 0.9));
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+            padding-bottom: 10px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 80px;
+            height: 5px;
+            background-color: #00c4cc;
+            border-radius: 3px;
+        }
+        .kpi-card {
+            border-left-width: 4px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .kpi-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .feature-card {
+            background-color: #1f2937;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid #00c4cc;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+        }
+        .feature-card p {
+            color: #d1d5db;
+            margin-bottom: 0.75rem;
+        }
+        .feature-card ul {
+            margin-top: 0.75rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .feature-card ul li {
+            color: #9ca3af;
+            margin-bottom: 0.25rem;
+        }
+        .cta-button {
+            background-color: #ff9900; /* Orange CTA */
+            color: white;
+            padding: 1.25rem 3rem;
+            border-radius: 9999px;
+            font-size: 1.125rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: background-color 0.3s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.3s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .cta-button:hover {
+            background-color: #cc7a00;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .cta-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .section-bg-dark-content { background-color: #001a33; }
+        .section-text-light-content { color: #ffffff; }
+        .section-bg-dark-teal { background-color: #005F73; }
+        .section-text-light { color: #FFFFFF; }
+        .section-title.light-underline::after {
+            background-color: #94D2BD;
+        }
+        .impact-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        .impact-tile {
+            background-color: #1f2937;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border: 1px solid #00c4cc;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+        .impact-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-color: #00a0a8;
+        }
+        .impact-tile .value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00c4cc;
+            line-height: 1.1;
+            margin-bottom: 0.25rem;
+        }
+        .impact-tile .description {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d1d5db;
+            line-height: 1.3;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .impact-category-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #00c4cc;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            padding: 0 1rem;
+        }
+        .impact-category-title::before,
+        .impact-category-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 50px;
+            height: 2px;
+            background-color: #009999;
+        }
+        .impact-category-title::before {
+            left: -60px;
+        }
+        .impact-category-title::after {
+            right: -60px;
+        }
+        .modal .modal-content {
+            background-color: #1a202c;
+            color: #ffffff;
+        }
+        .modal-body h4 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #00c4cc;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #00c4cc;
+            padding-bottom: 0.5rem;
+        }
+        .modal-body h5 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #63b3ed;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .modal-body p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: #d1d5db;
+        }
+        .modal-body ul {
+            list-style: none;
+            margin-left: 0;
+            margin-bottom: 1rem;
+        }
+        .modal-body ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+        .modal-body ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #00c4cc;
+            font-size: 1.2em;
+            line-height: 1;
+            top: 0.1em;
+        }
+        .moving-element {
+            position: absolute;
+            background-color: rgba(0, 196, 204, 0.15); /* Updated color */
+            border-radius: 50%;
+            opacity: 0.7;
+            animation-name: float;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            filter: blur(1px);
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(var(--x-offset-1), var(--y-offset-1)); }
+            50% { transform: translate(var(--x-offset-2), var(--y-offset-2)); }
+            75% { transform: translate(var(--x-offset-3), var(--y-offset-3)); }
+            100% { transform: translate(0, 0); }
+        }
+        .logo-container {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 1.5rem;
+        }
+        .logo-container img {
+          max-height: 80px;
+          object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Parallax Background Element -->
+    <div class="parallax-bg" id="parallaxBg"></div>
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 relative z-10">
+
+        <!-- Header Section - Enhanced Hero -->
+        <header id="hero" class="text-center mb-12 max-w-4xl w-full hero-section pt-24">
+            <div class="hero-content">
+                <div class="logo-container">
+                    <img src="https://www.thaiseaplane.com/wp-content/uploads/2023/12/logo1x.png" alt="Thai Seaplane Logo" class="h-20" style="object-fit: contain;">
+                </div>
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-400 drop-shadow-lg">
+                    Zaui's Content Hub
+                </h1>
+                <p class="text-2xl sm:text-3xl text-gray-300 max-w-2xl mx-auto mb-6">
+                    Built for Thai Seaplane
+                </p>
+                <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto">
+                    Empowering seamless seaplane adventures with cutting-edge technology. Discover how our partnership drives innovation and efficiency in Thailand's skies.
+                </p>
+            </div>
+        </header>
+
+        <!-- What You Can Find on This Page Section -->
+        <section id="what-you-can-find-section" class="w-full max-w-6xl bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-10 border border-blue-700/50 mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-blue-300 text-center">What You Can Find on This Page</h2>
+            <p class="text-md sm:text-lg text-gray-300 max-w-3xl mx-auto text-center mb-8">
+                This page is your comprehensive resource for understanding the powerful partnership between Thai Seaplane and Zaui. Explore various aspects of our collaboration and discover how Zaui drives success in the travel industry.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="quantifiable-impact">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Quantifiable Impact</h4>
+                    <p class="text-gray-400 text-sm">Dive into key performance indicators and proven results from Zaui clients, with insights tailored for Thai Seaplane.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="revenue-section">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Revenue Potential</h4>
+                    <p class="text-gray-400 text-sm">Explore how Zaui helps maximize revenue through dynamic pricing, expanded sales channels, and efficient booking.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="efficiency-section">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Operational Efficiency</h4>
+                    <p class="text-gray-400 text-sm">Learn about automation, streamlined check-ins, and resource management features that save time and reduce overhead.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="customer-experience-section">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Customer Experience</h4>
+                    <p class="text-gray-400 text-sm">Discover how Zaui elevates passenger journeys with seamless booking, proactive communication, and loyalty-building tools.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="case-studies">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Case Studies & Blogs</h4>
+                    <p class="text-gray-400 text-sm">Read in-depth analyses of successful client stories and insightful articles on industry trends.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="webinars">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Webinars & E-books</h4>
+                    <p class="text-gray-400 text-sm">Access valuable educational content, including expert webinars and comprehensive e-books, to deepen your understanding.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="zaui-clients">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Zaui Clients</h4>
+                    <p class="text-gray-400 text-sm">See other valued Zaui clients who trust our solutions.</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105" data-target="connect-with-zaui">
+                    <h4 class="text-xl font-semibold text-blue-200 mb-2">Connect with Zaui</h4>
+                    <p class="text-400 text-sm">Ready to take the next step? Easily book a call with our Head of Sales to discuss your specific needs.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Main Content Sections Container -->
+        <main class="w-full max-w-6xl bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-10 border border-blue-700/50">
+
+            <!-- Content Categories - Clickable Filters -->
+            <section class="mb-12 text-center">
+                <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                    Explore Our Resources
+                </h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button class="category-filter-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="all">All Content</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="quantifiable-impact">Quantifiable Impact</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="revenue-section">Revenue</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="efficiency-section">Efficiency</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="customer-experience-section">Customer Experience</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="case-studies">Case Studies</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="webinars">Webinars & Videos</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="ebooks">E-books</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="blogs">Blogs</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="zaui-clients">Zaui Clients</button>
+                    <button class="category-filter-btn bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full transition-colors duration-300" data-category="connect-with-zaui">Connect with Zaui</button>
+                </div>
+            </section>
+
+            <!-- Quantifiable Impact Section (Redesigned) -->
+            <section id="quantifiable-impact" class="content-section py-8 px-6 section-bg-dark-content rounded-xl mb-12 section-text-light-content">
+                <div class="container mx-auto max-w-7xl text-center">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-16 section-title light-underline">
+                        Quantifiable Impact: Zaui's Proven Results
+                    </h2>
+                    <h3 class="impact-category-title text-blue-300">Overall Zaui Impact</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
+                        <div class="impact-tile" data-impact-type="overall-experience" data-value="25 Years" data-description="Experience (since 1999, 1000s of operators)">
+                            <p class="value">25 Years</p>
+                            <p class="description">Experience (since 1999, 1000s of operators)</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="overall-growth" data-value="14%" data-description="YoY Growth for Average Customer">
+                            <p class="value">14%</p>
+                            <p class="description">YoY Growth for Average Customer</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                    </div>
+                    <h3 class="impact-category-title text-blue-300">Drive More Revenue</h3>
+                    <div class="impact-grid-container mb-12">
+                        <div class="impact-tile" data-impact-type="revenue-275-lifetime" data-value="275%" data-description="Business Growth Over Time (long-term users)">
+                            <p class="value">275%</p>
+                            <p class="description">Business Growth Over Time (long-term users)</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="revenue-20-peak" data-value="20%" data-description="Revenue Increase in Peak Season (Dynamic Pricing)">
+                            <p class="value">20%</p>
+                            <p class="description">Revenue Increase in Peak Season (Dynamic Pricing)</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                    </div>
+                    <h3 class="impact-category-title text-blue-300">Expand Sales Through More Channels</h3>
+                    <div class="impact-grid-container mb-12">
+                        <div class="impact-tile" data-impact-type="channels-30-agents" data-value="30%" data-description="More Bookings through Agents & Resellers">
+                            <p class="value">30%</p>
+                            <p class="description">More Bookings through Agents & Resellers</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="channels-global-reach" data-value="Global Reach" data-description="with Viator, Expedia, Google & more">
+                            <p class="value">Global Reach</p>
+                            <p class="description">with Viator, Expedia, Google & more</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="channels-no-overbookings" data-value="No More" data-description="Overbookings (Real-time Inventory Sync)">
+                            <p class="value">No More</p>
+                            <p class="description">Overbookings (Real-time Inventory Sync)</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="channels-track-roi" data-value="Track ROI" data-description="on Partners with Precision">
+                            <p class="value">Track ROI</p>
+                            <p class="description">on Partners with Precision</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="channels-multiple-brands" data-value="Multiple Brands" data-description="or Locations from One System">
+                            <p class="value">Multiple Brands</p>
+                            <p class="description">or Locations from One System</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                    </div>
+                    <h3 class="impact-category-title text-blue-300">Streamline Operations & Save on Overhead</h3>
+                    <div class="impact-grid-container mb-12">
+                        <div class="impact-tile" data-impact-type="operations-75-workload" data-value="75%" data-description="Reduction in Office Workload">
+                            <p class="value">75%</p>
+                            <p class="description">Reduction in Office Workload</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="operations-grow-without-staff" data-value="Grow Bookings" data-description="Without Growing Staff">
+                            <p class="value">Grow Bookings</p>
+                            <p class="description">Without Growing Staff</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="operations-speed-checkin" data-value="Speed Up" data-description="Boarding and Check-in">
+                            <p class="value">Speed Up</p>
+                            <p class="description">Boarding and Check-in</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="operations-consolidate-tools" data-value="Consolidate Tools" data-description="Reduce Software Spend">
+                            <p class="value">Consolidate Tools</p>
+                            <p class="description">Reduce Software Spend</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Zaui Clients Section -->
+            <section id="zaui-clients" class="content-section">
+                <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                    Our Valued Clients
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Client 1: Luxury Airport Shuttles -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Luxury+Airport" alt="Luxury Airport Shuttles Logo">
+                        <h4 class="text-blue-300">Luxury Airport Shuttles</h4>
+                        <p class="text-gray-400 text-sm">Providing premium airport transfer services with a focus on comfort and reliability.</p>
+                        <a href="https://www.luxuryairportshuttles.co.nz/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 2: Vivo Green Travel -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Vivo+Green" alt="Vivo Green Travel Logo">
+                        <h4 class="text-blue-300">Vivo Green Travel</h4>
+                        <p class="text-gray-400 text-sm">Specializing in eco-friendly and sustainable travel experiences around the globe.</p>
+                        <a href="https://vivogreentravel.com/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 3: Banff Airporter -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Banff+Airporter" alt="Banff Airporter Logo">
+                        <h4 class="text-blue-300">Banff Airporter</h4>
+                        <p class="text-gray-400 text-sm">Connecting travelers to the Canadian Rockies with reliable and comfortable airport shuttle services.</p>
+                        <a href="https://banffairporter.com/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 4: Kootenay Charters -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Kootenay+Charters" alt="Kootenay Charters Logo">
+                        <h4 class="text-blue-300">Kootenay Charters</h4>
+                        <p class="text-gray-400 text-sm">Offering private charter services for groups and events across the Kootenay region.</p>
+                        <a href="https://www.kootenaycharters.com/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 5: Vegas Airporter -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Vegas+Airporter" alt="Vegas Airporter Logo">
+                        <h4 class="text-blue-300">Vegas Airporter</h4>
+                        <p class="text-gray-400 text-sm">Revolutionizing shuttle services in Las Vegas with efficient and customer-focused transportation.</p>
+                        <a href="https://vegasairporter.com/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 6: Reindeer Shuttle -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Reindeer+Shuttle" alt="Reindeer Shuttle Logo">
+                        <h4 class="text-blue-300">Reindeer Shuttle</h4>
+                        <p class="text-gray-400 text-sm">Providing unique and reliable shuttle services, ensuring memorable journeys for their passengers.</p>
+                        <a href="https://www.reindeershuttle.com/book-now/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 7: MMBL -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=MMBL" alt="MMBL Logo">
+                        <h4 class="text-blue-300">MMBL</h4>
+                        <p class="text-gray-400 text-sm">A leading transport provider, utilizing modern solutions for efficient and widespread service delivery.</p>
+                        <a href="https://www.mmbl.com.au/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                    <!-- Client 8: Byron Bay Express -->
+                    <div class="client-card">
+                        <img src="https://placehold.co/120x60/374151/e5e7eb?text=Byron+Bay+Express" alt="Byron Bay Express Logo">
+                        <h4 class="text-blue-300">Byron Bay Express</h4>
+                        <p class="text-gray-400 text-sm">Offering convenient and comfortable express transport services in the Byron Bay area.</p>
+                        <a href="https://byronbayexpress.com.au/" target="_blank">Visit Website &rarr;</a>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Revenue Section -->
+            <section id="revenue-section" class="content-section py-8 px-6 section-bg-dark-content rounded-xl mb-12 section-text-light-content">
+                <div class="container mx-auto max-w-6xl">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-16 text-center section-title light-underline">
+                        Unleash Unrivaled Revenue Potential
+                    </h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div class="feature-card flex flex-col items-center text-center">
+                            <h3 class="text-2xl font-bold text-[#005F73] mt-6 mb-4">Dynamic Pricing Mastery</h3>
+                            <p class="text-lg text-gray-400 mb-4">
+                                Optimize every single seat on every single seaplane. Zaui’s advanced dynamic pricing maximizes profitability across island transfers, scenic tours, and special charter services.
+                            </p>
+                            <ul class="list-disc list-inside text-gray-400 space-y-2 text-left w-full">
+                                <li>Maximize profitability across all routes and services.</li>
+                                <li>Intelligently adjust fares to fill off-peak capacity.</li>
+                                <li>Ensure no seat is undervalued, optimizing every journey.</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card flex flex-col items-center text-center">
+                            <h3 class="text-2xl font-bold text-[#005F73] mt-6 mb-4">Expand Global Reach & Boost Direct Bookings</h3>
+                            <p class="text-lg text-gray-400 mb-4">
+                                Connect with millions more passengers worldwide while driving more commission-free bookings directly to Thai Seaplane.
+                            </p>
+                            <ul class="list-disc list-inside text-gray-400 space-y-2 text-left w-full">
+                                <li>Integrate with 30+ major OTAs (Viator, Expedia, GetYourGuide).</li>
+                                <li>Official Google Things to Do partner for commission-free direct bookings.</li>
+                                <li>Supercharge upsells and add-ons directly within your booking flow.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center mt-12">
+                        <button id="revenueInsightBtn" class="cta-button text-base px-6 py-3" onclick="showInsightModal('Revenue Insights for Thai Seaplane', insights.revenue.text)">
+                            Get Insight on Revenue
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Efficiency Section -->
+            <section id="efficiency-section" class="content-section py-8 px-6 section-bg-dark-content rounded-xl mb-12 section-text-light-content">
+                <div class="container mx-auto max-w-6xl">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-16 text-center section-title light-underline">
+                        Achieve Unprecedented Operational Efficiency
+                    </h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div class="feature-card flex flex-col items-center text-center">
+                            <h3 class="text-2xl font-bold text-[#005F73] mt-6 mb-4">Intelligent Automation & Management</h3>
+                            <p class="text-lg text-gray-400 mb-4">
+                                Replace manual processes with a powerful, centralized system that works tirelessly for your seaplane fleet.
+                            </p>
+                            <ul class="list-disc list-inside text-gray-400 space-y-2 text-left w-full">
+                                <li>Comprehensive automation for scheduling and real-time inventory.</li>
+                                <li>Reduce administrative staff by up to 66%.</li>
+                                <li>Complete complex updates 40x faster than traditional methods.</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card flex flex-col items-center text-center">
+                            <h3 class="text-2xl font-bold text-[#005F73] mt-6 mb-4">Streamlined Check-in & On-Board Operations</h3>
+                            <p class="text-lg text-gray-400 mb-4">
+                                Ensure lightning-fast passenger processing and empower your team with seamless on-site tools.
+                            </p>
+                            <ul class="list-disc list-inside text-gray-400 space-y-2 text-left w-full">
+                                <li>Mobile app & POS for rapid QR code check-ins.</li>
+                                <li>Minimize queues at waterfront terminals and resort docks.</li>
+                                <li>Empower pilots and crew with efficient contactless payment and walk-up booking.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center mt-12">
+                        <button id="efficiencyInsightBtn" class="cta-button text-base px-6 py-3" onclick="showInsightModal('Efficiency Insights for Thai Seaplane', insights.efficiency.text)">
+                            Get Insight on Efficiency
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Experience Section -->
+            <section id="customer-experience-section" class="content-section py-8 px-6 section-bg-dark-content rounded-xl mb-12 section-text-light-content">
+                <div class="container mx-auto max-w-7xl text-center">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-16 section-title light-underline">
+                        Elevate the Thai Seaplane Passenger Experience
+                    </h2>
+                    <div class="impact-grid-container">
+                        <div class="impact-tile" data-impact-type="guest-50-online">
+                            <p class="value">Shift 50%</p>
+                            <p class="description">of Bookings Online</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="guest-10x-reviews">
+                            <p class="value">10x More</p>
+                            <p class="description">Guest Reviews</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="guest-sell-24-7">
+                            <p class="value">Sell 24/7</p>
+                            <p class="description">Even While You Sleep</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="guest-fewer-abandoned">
+                            <p class="value">Fewer Abandoned</p>
+                            <p class="description">Carts, More Confirmed Bookings</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                        <div class="impact-tile" data-impact-type="guest-5-star-repeat">
+                            <p class="value">Earn More</p>
+                            <p class="description">5-Star Reviews & Repeat Business</p>
+                            <div class="impact-tile-overlay">Click for Insight</div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-12">
+                        <button id="cxInsightBtn" class="cta-button text-base px-6 py-3" onclick="showInsightModal('Customer Experience Insights for Thai Seaplane', insights.customer_experience.text)">
+                            Get Insight on Customer Experience
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Case Studies Section (Original) -->
+            <section id="case-studies" class="content-section">
+                <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                    Case Studies
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Case Study 1 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Vegas Airporter: How Vegas Airporter Revolutionizes Shuttle Services with Zaui</h4>
+                        <p class="text-gray-400 text-sm mb-3">Discover how Vegas Airporter transformed their shuttle services, enhancing efficiency and customer satisfaction.</p>
+                        <a href="https://www.zaui.com/blog/shuttle-scheduling-software-case-study/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm">Read More &rarr;</a>
+                        <button class="case-study-insights-btn mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Vegas Airporter: Revolutionizing Shuttle Services"
+                                data-insight="Vegas Airporter revolutionized shuttle services by implementing Zaui's advanced scheduling and booking software. This led to significant improvements in route optimization, real-time vehicle tracking, and seamless passenger management. The result was a noticeable increase in operational efficiency, a reduction in manual errors, and enhanced customer satisfaction due to reliable and timely service. Thai Seaplane could leverage similar scheduling and tracking features to optimize their seaplane routes, reduce idle times, and provide real-time updates to passengers, leading to improved service reliability and customer loyalty.">
+                            ✨ Get Insight
+                        </button>
+                    </div>
+                    <!-- Case Study 2 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Galveston Express: Mission Critical | The Gap in Galveston</h4>
+                        <p class="text-gray-400 text-sm mb-3">Explore how Galveston Express addressed critical operational gaps with Zaui's robust solutions.</p>
+                        <a href="https://www.zaui.com/blog/tourism-case-study-galveston-express/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm">Read More &rarr;</a>
+                        <button class="case-study-insights-btn mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Galveston Express: Mission Critical"
+                                data-insight="Galveston Express faced critical operational gaps, particularly in managing high seasonal demand and optimizing resource allocation. Zaui provided a scalable booking platform that integrated seamlessly with their existing systems, allowing them to handle increased booking volumes without bottlenecks. This also improved their ability to dynamically assign vehicles and drivers based on real-time demand. For Thai Seaplane, this means adopting a flexible and scalable booking system that can easily adapt to fluctuating passenger numbers during peak travel seasons, ensuring smooth operations and preventing service disruptions.">
+                            ✨ Get Insight
+                        </button>
+                    </div>
+                    <!-- Case Study 3 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Fairview Limousine: Dynamic Pricing to increase Revenue by 20%</h4>
+                        <p class="text-gray-400 text-sm mb-3">See how Fairview Limousine achieved a 20% revenue increase using dynamic pricing strategies powered by Zaui.</p>
+                        <a href="https://www.zaui.com/blog/case-study-dynamic-pricing-success-with-fairview-limo/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm">Read More &rarr;</a>
+                        <button class="case-study-insights-btn mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Fairview Limousine: Dynamic Pricing Success"
+                                data-insight="Fairview Limousine successfully implemented Zaui's dynamic pricing module, leading to a 20% increase in revenue. By analyzing demand patterns, time of day, and special events, the system automatically adjusted pricing to maximize profitability while remaining competitive. This allowed them to capture higher revenue during peak times and stimulate demand during off-peak periods. Thai Seaplane can adopt dynamic pricing to optimize ticket prices based on factors like route popularity, time of travel, and booking lead time, thereby maximizing revenue per seat and improving overall profitability.">
+                            ✨ Get Insight
+                        </button>
+                    </div>
+                    <!-- Case Study 4 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">IceWalks Tours: Diversified Sales Channels with Zaui</h4>
+                        <p class="text-gray-400 text-sm mb-3">Understand how IceWalks Tours expanded their reach and sales by diversifying channels with Zaui software.</p>
+                        <a href="https://www.zaui.com/blog/zaui-reservation-software-customer-story-icewalks/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm">Read More &rarr;</a>
+                        <button class="case-study-insights-btn mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="IceWalks Tours: Diversifying Sales Channels"
+                                data-insight="IceWalks Tours significantly expanded their customer reach and sales by leveraging Zaui's ability to integrate with multiple sales channels, including online travel agencies (OTAs), direct website bookings, and agent portals. This multi-channel approach ensured their tours were visible to a wider audience and streamlined the booking process across all platforms. Thai Seaplane could utilize Zaui's distribution capabilities to sell tickets through various online platforms, travel agents, and even directly on their website, ensuring maximum exposure and convenience for passengers, ultimately leading to increased ticket sales.">
+                            ✨ Get Insight
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Webinars Section -->
+            <section id="webinars" class="content-section">
+                <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                    Webinars & Videos
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Webinar 1 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">[Webinar] Maximize Reach & Revenue: How Transportation Operators Can Win with Online Retailers</h4>
+                        <p class="text-gray-400 text-sm mb-3">Learn strategies for transportation operators to maximize reach and revenue by partnering with online retailers.</p>
+                        <a href="https://offer.zaui.com/webinar-maximize-reach-revenue-how-transportation-operators-can-win-with-online-retailers" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                    <!-- Webinar 2 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Zaui Web Checkout: Turn Clicks into Bookings</h4>
+                        <p class="text-gray-400 text-sm mb-3">Discover the new Zaui Web Checkout and how it optimizes your booking process to convert more clicks into actual bookings.</p>
+                        <a href="https://www.zaui.com/blog/zaui-web-checkout/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                    <!-- Webinar 3 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Webinar Recording: Latest Travel Insights and Trends to Boost Your Bookings with Get Your Guide</h4>
+                        <p class="text-gray-400 text-sm mb-3">Gain expert insights and discover the latest travel trends to significantly boost your bookings with Get Your Guide.</p>
+                        <a href="https://offer.zaui.com/webinar-recording-expert-insights-to-boost-bookings-with-getyourguide" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                    <!-- Webinar 4 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Dynamic Pricing Strategies (Webinar)</h4>
+                        <p class="text-gray-400 text-sm mb-3">A deep dive into effective dynamic pricing strategies for maximizing revenue in the travel industry.</p>
+                        <a href="https://www.zaui.com/blog/dynamic-pricing-tour-operators/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                    <!-- Webinar 5 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Optimizing Your Website for the Travel Industry</h4>
+                        <p class="text-gray-400 text-sm mb-3">Learn how to optimize your website to attract more customers and improve conversions in the travel and outdoor industry.</p>
+                        <a href="https://offer.zaui.com/webinar-optimizing-your-website-for-the-travel-and-outdoor-industry" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                    <!-- Webinar 6 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Zaui Partner Webinar: Set Yourself Up for Success in 2025 with Zaui</h4>
+                        <p class="text-gray-400 text-sm mb-3">Insights from Zaui experts on how to prepare your business for success in the upcoming year.</p>
+                        <a href="https://offer.zaui.com/webinar-set-yourself-up-for-success-in-2025-with-zaui-0" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                      <!-- Webinar 7 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Get your Zaui System Ready to Handle the Peak Season with Confidence</h4>
+                        <p class="text-gray-400 text-sm mb-3">Tips and best practices for optimizing your Zaui booking system to handle peak season demands seamlessly.</p>
+                        <a href="https://offer.zaui.com/webinar-optimizing-your-booking-system-ready-for-peak-season" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                      <!-- Webinar 8 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">AI & Chatbot Best Practices</h4>
+                        <p class="text-gray-400 text-sm mb-3">Explore best practices for integrating AI and chatbots into your operations for enhanced customer service and efficiency.</p>
+                        <a href="https://offer.zaui.com/webinar-recording-tomis-ai-tools" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Watch Now &rarr;</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- E-books Section -->
+            <section id="ebooks" class="content-section">
+                <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                    E-books
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- E-book 1 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">The Essential Buyer's Guide for Transportation Systems</h4>
+                        <p class="text-gray-400 text-sm mb-3">A comprehensive guide to selecting the right transportation management system for your business needs.</p>
+                        <a href="https://9407876.fs1.hubspotusercontent-na1.net/hubfs/9407876/Ebooks/Zaui%20Ride%20Buyers%20Guide.pdf" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Download &rarr;</a>
+                    </div>
+                    <!-- E-book 2 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Best Transport Booking Software Features</h4>
+                        <p class="text-gray-400 text-sm mb-3">An in-depth look at the essential features to consider when choosing transport booking software.</p>
+                        <a href="https://www.zaui.com/blog/best-transport-booking-software/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Download &rarr;</a>
+                    </div>
+                    <!-- E-book 3 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Mastering Travel Distribution Channels</h4>
+                        <p class="text-gray-400 text-sm mb-3">Strategies for effectively utilizing various travel distribution channels to maximize your reach and bookings.</p>
+                        <a href="https://www.zaui.com/blog/travel-distribution-channels/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Download &rarr;</a>
+                    </div>
+                    <!-- E-book 4 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Supercharge Your Bookings with Zapier</h4>
+                        <p class="text-gray-400 text-sm mb-3">Learn how Zapier integrations can automate workflows and supercharge your tour booking software.</p>
+                        <a href="https://www.zaui.com/blog/supercharge-your-tour-booking-software-with-zapier-integrations/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Download &rarr;</a>
+                    </div>
+                    <!-- E-book 5 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">The Ultimate Dynamic Pricing Guide</h4>
+                        <p class="text-gray-400 text-sm mb-3">A comprehensive guide to implementing dynamic pricing strategies for tour operators to optimize revenue.</p>
+                        <a href="https://9407876.fs1.hubspotusercontent-na1.net/hubfs/9407876/Ebooks/Dynamic%20Pricing%20Guidebook%20Zaui%20Software.pdf" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Download &rarr;</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blogs Section -->
+            <section id="blogs" class="content-section">
+                <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                    Blogs
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Blog Post 1 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Comprehensive Guide to Managing Service Disruptions for Transport Operators</h4>
+                        <p class="text-gray-400 text-sm mb-3">Essential strategies for transport operators to effectively manage and mitigate service disruptions.</p>
+                        <a href="https://www.zaui.com/blog/guide-to-managing-service-disruptions-comprehensive-guide-to-managing-service-disruptions-for-transport-operators/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Comprehensive Guide to Managing Service Disruptions for Transport Operators"
+                                data-insight="For Thai Seaplane, this guide provides a structured approach to handling unforeseen operational challenges like weather-related delays or maintenance issues. It emphasizes using an integrated booking system to send automated real-time notifications to customers, re-accommodate bookings, and manage crew schedules efficiently. By having a clear plan and the right technology, Thai Seaplane can maintain high service standards, minimize customer frustration, and protect its brand reputation during critical moments.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 2 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Revolutionize Your Resource Management with Zaui's Resource Assignment Feature</h4>
+                        <p class="text-gray-400 text-sm mb-3">Discover how Zaui's resource assignment feature can streamline your operations and optimize resource utilization.</p>
+                        <a href="https://www.zaui.com/blog/revolutionize-your-resource-management-revolutionize-your-resource-management-with-zauis-resource-assignment-feature/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Revolutionize Your Resource Management with Zaui's Resource Assignment Feature"
+                                data-insight="For Thai Seaplane, a centralized resource management tool is vital for coordinating pilots, ground crew, and seaplanes. Zaui’s feature allows for drag-and-drop scheduling, preventing double bookings and ensuring optimal utilization of every asset. This not only increases efficiency and reduces administrative work but also provides a real-time overview of the entire operation, which is critical for a high-value, time-sensitive service like seaplane travel.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 3 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">How to Start a Tour Business in 2025: Practical Guide</h4>
+                        <p class="text-gray-400 text-sm mb-3">A practical guide for aspiring entrepreneurs on starting a successful tour business in the current market.</p>
+                        <a href="https://www.zaui.com/blog/how-to-start-a-tour-business-in-2025-practical-guide/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="How to Start a Tour Business in 2025: Practical Guide"
+                                data-insight="Thai Seaplane can apply the principles in this guide to optimize its long-term strategy. The article’s focus on selecting the right technology partner from the outset, understanding market demand, and building a scalable business model is directly relevant. This information can be used to validate and refine their current business processes, ensuring they are positioned for continued growth and are utilizing best practices to stay ahead of the competition in Thailand's travel market.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 4 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Top 7 Travel Review Sites for Tour Operators in 2024</h4>
+                        <p class="text-gray-400 text-sm mb-3">A curated list of the best travel review sites to help tour operators manage their online reputation.</p>
+                        <a href="https://www.zaui.com/blog/top-7-travel-review-sites-for-tour-operators-in-2024/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Top 7 Travel Review Sites for Tour Operators in 2024"
+                                data-insight="For Thai Seaplane, managing online reputation is crucial for attracting new customers. Zaui's platform helps automate the process of collecting reviews by sending follow-up emails to guests after their trip, helping them get more reviews.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 5 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">What to Look for in a Travel Booking Software in 2025</h4>
+                        <p class="text-gray-400 text-sm mb-3">Key considerations and features to prioritize when choosing a travel booking software in the coming year.</p>
+                        <a href="https://www.zaui.com/blog/what-to-look-for-in-a-travel-booking-software-in-2025/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="What to Look for in a Travel Booking Software in 2025"
+                                data-insight="This article serves as a validation checklist for Thai Seaplane. It highlights essential features like seamless OTA integrations, robust resource management, mobile capabilities, and dynamic pricing, all of which are core components of the Zaui platform. By reviewing this guide, Thai Seaplane can confirm that Zaui's solution not only meets their current needs but is also future-proof, equipped to handle industry trends and support their growth objectives for years to come.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 6 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Selling Through Agents on Zaui: An Explainer for Tour and Transport Operators</h4>
+                        <p class="text-gray-400 text-sm mb-3">A detailed guide on how tour and transport operators can effectively sell their offerings through agents using Zaui.</p>
+                        <a href="https://www.zaui.com/blog/selling-through-agents-on-zaui-an-explainer-for-tour-and-transport-operators/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Selling Through Agents on Zaui: An Explainer for Tour and Transport Operators"
+                                data-insight="For Thai Seaplane, expanding sales through agents is a key strategy for reaching more international and local tourists. This article explains how Zaui's platform simplifies this process with a dedicated agent portal, automatic commission tracking, and real-time inventory synchronization. This ensures that agents can easily book and manage reservations, reducing administrative burdens for Thai Seaplane and providing clear visibility into the performance of each sales channel.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 7 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Transport Booking System New Features</h4>
+                        <p class="text-gray-400 text-sm mb-3">An overview of the latest features and updates in Zaui's transport booking system.</p>
+                        <a href="https://www.zaui.com/blog/transport-booking-system-new-features/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Transport Booking System New Features"
+                                data-insight="This blog highlights Zaui's commitment to continuous improvement, which is vital for a growing company like Thai Seaplane. By staying up-to-date with the latest features, Thai Seaplane can consistently leverage new technologies to enhance their booking experience, streamline internal processes, and offer a more modern service to their customers. This ensures the partnership remains a source of innovation and competitive advantage.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 8 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Top 10 Benefits of Online Booking System</h4>
+                        <p class="text-gray-400 text-sm mb-3">Discover the top advantages of implementing an online booking system for your travel business.</p>
+                        <a href="https://www.zaui.com/blog/top-10-benefits-of-online-booking-system/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Top 10 Benefits of Online Booking System"
+                                data-insight="The core benefits outlined in this article, such as selling 24/7, reducing administrative workload, and providing a better customer experience, are directly relevant to Thai Seaplane. Adopting a robust online booking system like Zaui allows Thai Seaplane to scale its operations without a corresponding increase in staff, capture international bookings from different time zones, and provide passengers with the modern, seamless booking experience they expect.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 9 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Features of Online Booking System</h4>
+                        <p class="text-gray-400 text-sm mb-3">A detailed breakdown of essential features found in modern online booking systems.</p>
+                        <a href="https://www.zaui.com/blog/features-of-online-booking-system/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Features of Online Booking System"
+                                data-insight="For Thai Seaplane, this article highlights the key functionalities that are essential for a modern transport operation. Features like real-time availability, integrated payment gateways, and automated confirmations are all built into Zaui's platform. By understanding and utilizing these features, Thai Seaplane can ensure that its booking process is efficient, reliable, and provides a superior experience for both staff and customers.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 10 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Shuttle Booking Software</h4>
+                        <p class="text-gray-400 text-sm mb-3">Everything you need to know about choosing and implementing shuttle booking software.</p>
+                        <a href="https://www.zaui.com/blog/shuttle-booking-software/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Shuttle Booking Software"
+                                data-insight="As a specialized transport provider, Thai Seaplane can benefit from the principles of this article. Zaui’s platform is highly configurable and can be tailored to the unique needs of a seaplane operation, including managing specific flight routes, passenger manifests, and weight restrictions. The article’s emphasis on a system that automates scheduling and provides real-time data is directly applicable to optimizing Thai Seaplane's unique logistical challenges.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                    <!-- Blog Post 11 -->
+                    <div class="content-card rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-transparent hover:border-blue-500">
+                        <h4 class="text-xl font-semibold mb-2 text-blue-200">Transportation Operators: Zaui On-The-Go</h4>
+                        <p class="text-gray-400 text-sm mb-3">How Zaui's mobile solutions empower transportation operators on the go.</p>
+                        <a href="https://www.zaui.com/blog/transportation-operators-zaui-on-the-go/" target="_blank" class="inline-block text-blue-400 hover:text-blue-300 font-medium text-sm mt-4">Read Article &rarr;</a>
+                        <button class="blog-insights-btn mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm"
+                                data-title="Transportation Operators: Zaui On-The-Go"
+                                data-insight="For a seaplane operation like Thai Seaplane, having a mobile-first solution is critical for ground and air crews. This article highlights how Zaui's mobile app allows staff to manage check-ins, view passenger lists, and handle walk-up bookings from remote locations like island docks. This eliminates the need for paper manifests and ensures that operations remain efficient and data-driven, even when away from a central office.">
+                            🧠 Get Insight
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Connect with Zaui Section -->
+        <section id="connect-with-zaui" class="w-full max-w-6xl mt-12 bg-gray-900 bg-opacity-70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-10 border border-blue-700/50 text-center">
+            <h3 class="text-2xl sm:text-3xl font-semibold mb-6 text-blue-400 border-b border-blue-600 pb-2">
+                Connect with Zaui
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Contact Card 1: Sam Rostainajad -->
+                <div class="bg-gradient-to-br from-blue-900 to-gray-800 rounded-lg p-8 shadow-2xl text-center border border-blue-700">
+                    <h4 class="text-xl font-semibold mb-4 text-blue-300">Your Main Point of Contact for Thai Seaplane</h4>
+                    <img src="https://placehold.co/150x150/00c4cc/ffffff?text=SAM" alt="Sam Rostainajad" class="rounded-full w-32 h-32 mx-auto mb-4 border-4 border-cyan-500 shadow-lg object-cover">
+                    <p class="text-3xl font-extrabold text-blue-200 mb-2">Sam Rostainajad</p>
+                    <p class="text-lg text-gray-300 mb-4">Head of Sales at Zaui</p>
+                    <p class="text-gray-400 max-w-xl mx-auto mb-6">
+                        Sam leads Zaui's sales strategy to empower travel businesses with innovative technology solutions. His background spans tech sales, with a strong foundation in customer relationships and digital transformation. He is dedicated to helping partners like Thai Seaplane achieve their operational and growth goals.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="https://meetings.hubspot.com/samim-rostainajad?uuid=9be6e192-b755-47e9-ab85-c77beae063fe" target="_blank" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-xl transform hover:scale-105">
+                            Book a Call with Sam &rarr;
+                        </a>
+                        <a href="https://www.linkedin.com/in/samimr/" target="_blank" class="inline-block bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-xl transform hover:scale-105">
+                            Connect on LinkedIn &rarr;
+                        </a>
+                    </div>
+                </div>
+                <!-- Contact Card 2: Jon Santos -->
+                <div class="bg-gradient-to-br from-blue-900 to-gray-800 rounded-lg p-8 shadow-2xl text-center border border-blue-700">
+                    <h4 class="text-xl font-semibold mb-4 text-blue-300">Your Main Point of Contact for Thai Seaplane</h4>
+                    <img src="https://placehold.co/150x150/00c4cc/ffffff?text=JON" alt="Jon Santos" class="rounded-full w-32 h-32 mx-auto mb-4 border-4 border-cyan-500 shadow-lg object-cover">
+                    <p class="text-3xl font-extrabold text-blue-200 mb-2">Jon Santos</p>
+                    <p class="text-lg text-gray-300 mb-4">Account Executive at Zaui</p>
+                    <p class="text-gray-400 max-w-xl mx-auto mb-6">
+                        Jon is a seasoned Account Executive at Zaui, specializing in creating tailored technology solutions for tour and transport operators. With a focus on client success, he is dedicated to understanding your business needs and demonstrating how the Zaui platform can drive efficiency, growth, and customer satisfaction.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="mailto:jon.santos@zaui.com" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-xl transform hover:scale-105">
+                            Email Jon &rarr;
+                        </a>
+                        <a href="https://www.linkedin.com/in/jnsntss" target="_blank" class="inline-block bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg shadow-md hover:shadow-xl transform hover:scale-105">
+                            Connect on LinkedIn &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="mt-12 text-center text-gray-400 text-sm">
+            <p>&copy; 2025 Thai Seaplane & Zaui. All rights reserved.</p>
+            <p class="mt-2">Powered by Innovation, Driven by Partnership.</p>
+        </footer>
+
+    </div>
+
+    <!-- Modal for Insights -->
+    <div id="insightsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="hideInsightModal()">&times;</span>
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4 text-blue-300"></h3>
+            <div id="modalText" class="text-gray-300 leading-relaxed">
+            </div>
+            <button id="copyInsightsBtn" class="mt-6 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 text-sm">
+                Copy to Clipboard
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const insights = {
+            'overall-experience': {
+                title: "Insight: 25 Years Experience (since 1999, 1000s of operators)",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Zaui's 25 years of experience means their platform is built on a foundation of deep industry knowledge and has been refined over thousands of client partnerships. For Thai Seaplane, this translates to a stable, reliable system with a proven track record.</p><h4>Key Benefits:</h4><ul><li>A platform with a long-standing history of stability and continuous improvement.</li><li>Access to refined features and best practices developed over decades.</li><li>Confidence in a partner with deep expertise in the tour and transport sector.</li></ul>"
+            },
+            'overall-growth': {
+                title: "Insight: 14% YoY Growth for Average Customer",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>The average Zaui customer experiences 14% year-over-year growth, demonstrating the platform's ability to drive sustained business expansion. For Thai Seaplane, this metric shows the potential for significant, long-term growth and market leadership in the seaplane industry.</p><h4>Key Benefits:</h4><ul><li>Utilize a platform specifically designed to support and accelerate growth.</li><li>Leverage tools that contribute to a measurable increase in bookings and revenue.</li><li>Position Thai Seaplane for market dominance with a scalable solution.</li></ul>"
+            },
+            'revenue-275-lifetime': {
+                title: "Insight: 275% Business Growth Over Time (long-term users)",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>This remarkable growth figure from long-term Zaui users is a testament to the platform's power to serve as a growth engine. Thai Seaplane can see Zaui not just as a booking system, but as a strategic partner capable of supporting a multi-year growth trajectory and building a lasting competitive advantage.</p><h4>Key Benefits:</h4><ul><li>Adopt a platform built for long-term scalability and expansion.</li><li>Focus on core business growth with confidence in your technology partner.</li><li>Build a sustainable business model with proven tools for long-term success.</li></ul>"
+            },
+            'revenue-20-peak': {
+                title: "Insight: 20% Revenue Increase in Peak Season (Dynamic Pricing)",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>With Zaui’s dynamic pricing, Thai Seaplane can strategically adjust ticket prices in real-time to capitalize on high-demand periods like holidays or special events. This intelligent pricing model ensures you are maximizing revenue per seat and optimizing profitability without requiring manual intervention.</p><h4>Key Benefits:</h4><ul><li>Automatically optimize pricing to match real-time market demand.</li><li>Increase revenue significantly during Thailand's busy tourist seasons.</li><li>Ensure that every seat is priced for maximum profitability.</li></ul>"
+            },
+            'channels-30-agents': {
+                title: "Insight: 30% More Bookings through Agents & Resellers",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Zaui's dedicated agent portal allows Thai Seaplane to seamlessly partner with hotels, local tour operators, and online travel agents. This expands your sales network dramatically, driving up to 30% more bookings from valuable third-party channels while providing a transparent system for tracking commissions and performance.</p><h4>Key Benefits:</h4><ul><li>Expand your reach to international travelers through a global network of partners.</li><li>Streamline commission tracking and manage partner relationships efficiently.</li><li>Increase bookings by tapping into new sales channels without a heavy administrative burden.</li></ul>"
+            },
+            'channels-global-reach': {
+                title: "Insight: Global Reach with Viator, Expedia, Google & more",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Zaui's direct integrations with major global platforms mean that Thai Seaplane’s offerings are visible to millions of potential customers worldwide. This allows Thai Seaplane to attract international tourists and generate commission-free direct bookings from sources like Google Things to Do, which is crucial for profitability.</p><h4>Key Benefits:</h4><ul><li>Tap into new global markets and attract international tourists.</li><li>Reduce reliance on high-commission third-party platforms.</li><li>Increase brand visibility and drive more direct website traffic.</li></ul>"
+            },
+            'channels-no-overbookings': {
+                title: "Insight: No More Overbookings (Real-time Inventory Sync)",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Overbookings are a critical issue for a seaplane service with limited capacity. Zaui’s real-time inventory synchronization ensures that no matter where a booking comes from—your website, an OTA, or an agent—your availability is instantly updated across all channels, eliminating the risk of overbooking and protecting your customer experience.</p><h4>Key Benefits:</h4><ul><li>Ensure accurate, real-time availability across all sales channels.</li><li>Eliminate the risk of costly and frustrating overbookings.</li><li>Increase operational confidence and reduce manual checks.</li></ul>"
+            },
+            'channels-track-roi': {
+                title: "Insight: Track ROI on Partners with Precision",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Zaui provides powerful analytics and affiliate link tracking that gives Thai Seaplane full transparency into which partners are driving the most value. This data-driven approach allows you to optimize your marketing spend and focus on the most profitable partnerships, ensuring a strong return on investment (ROI) for every collaboration.</p><h4>Key Benefits:</h4><ul><li>Make data-driven decisions on which partners to prioritize.</li><li>Optimize marketing spend and maximize return on investment.</li><li>Ensure fair and accurate commission payments to your partners.</li></ul>"
+            },
+            'channels-multiple-brands': {
+                title: "Insight: Multiple Brands or Locations from One System",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>As Thai Seaplane grows, it may expand its services to include scenic tours, charters, or new island destinations. Zaui's platform allows you to manage all of these different offerings, or even multiple brands, from a single, centralized system. This simplifies management and provides a holistic view of your entire business without needing separate software for each service.</p><h4>Key Benefits:</h4><ul><li>Manage diverse offerings and locations from a single platform.</li><li>Simplify administrative tasks and streamline reporting.</li><li>Enable future growth and expansion with a flexible system.</li></ul>"
+            },
+            'operations-75-workload': {
+                title: "Insight: 75% Reduction in Office Workload",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>By automating key tasks like booking confirmations, payment processing, and customer communication, Zaui significantly reduces the daily administrative burden on your team. This allows your staff to focus on high-value tasks, like providing exceptional customer service, rather than getting bogged down in manual, repetitive work.</p><h4>Key Benefits:</h4><ul><li>Free up staff time to focus on customer-facing activities.</li><li>Reduce overhead costs by increasing administrative efficiency.</li><li>Streamline your operations and reduce the potential for human error.</li></ul>"
+            },
+            'operations-grow-without-staff': {
+                title: "Insight: Grow Bookings Without Growing Staff",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Zaui's scalable platform is built to handle an increase in passenger volume without a corresponding increase in your administrative staff. As your business grows, the system automates more tasks, allowing you to handle more bookings and manage more flights with the same number of employees. This is a crucial advantage for maintaining profitability and scalability.</p><h4>Key Benefits:</h4><ul><li>Scale your operations efficiently without increasing payroll costs.</li><li>Handle high-volume periods with ease.</li><li>Ensure long-term business growth is sustainable and profitable.</li></ul>"
+            },
+            'operations-speed-checkin': {
+                title: "Insight: Speed Up Boarding and Check-in",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Zaui's mobile app and QR code scanning technology allow your ground crew to perform rapid check-ins at waterfront terminals or resort docks. This streamlines the boarding process, minimizes queues, and creates a seamless, modern experience for your passengers. It’s a vital feature for a premium travel service focused on efficiency and customer satisfaction.</p><h4>Key Benefits:</h4><ul><li>Provide a fast and frictionless check-in process for passengers.</li><li>Empower your staff with mobile tools for on-the-go operations.</li><li>Improve overall operational flow, especially during busy times.</li></ul>"
+            },
+            'operations-consolidate-tools': {
+                title: "Insight: Consolidate Tools & Reduce Software Spend",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>Instead of juggling multiple software platforms for reservations, CRM, and partner management, Zaui provides an all-in-one solution. This consolidation not only simplifies your workflow and data management but also results in significant cost savings by reducing your overall software spend. It’s a powerful way to enhance both operational and financial efficiency.</p><h4>Key Benefits:</h4><ul><li>Streamline all your business operations into a single platform.</li><li>Reduce monthly software costs by eliminating redundant tools.</li><li>Improve data consistency and reporting with a unified system.</li></ul>"
+            },
+            'guest-50-online': {
+                title: "Insight: Shift 50% of Bookings Online",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>By providing a user-friendly, mobile-first booking engine, Zaui encourages passengers to book directly online. This shifts up to 50% of bookings away from time-consuming phone calls, allowing your staff to focus on other tasks and providing a more convenient experience for customers who prefer self-service options. It’s a win-win for both efficiency and customer satisfaction.</p><h4>Key Benefits:</h4><ul><li>Provide a seamless, 24/7 booking experience for your customers.</li><li>Reduce the administrative workload associated with phone bookings.</li><li>Increase conversion rates by offering a frictionless online checkout process.</li></ul>"
+            },
+            'guest-10x-reviews': {
+                title: "Insight: 10x More Guest Reviews",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>In the competitive travel market, a strong online reputation is your best marketing tool. Zaui’s automated follow-up system prompts customers to leave reviews after their trip, helping you generate significantly more social proof. More positive reviews mean higher visibility on travel sites and a stronger, more trustworthy brand image, which in turn attracts more new customers.</p><h4>Key Benefits:</h4><ul><li>Build a powerful online reputation with authentic guest feedback.</li><li>Attract new customers by showcasing positive experiences.</li><li>Gain valuable insights into customer satisfaction and areas for improvement.</li></ul>"
+            },
+            'guest-sell-24-7': {
+                title: "Insight: Sell 24/7, Even While You Sleep",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>With an international customer base, the ability to accept bookings around the clock is crucial. Zaui's online booking engine is always-on, allowing passengers from different time zones to book at their convenience. This ensures you never miss a potential sale and that your business is constantly generating revenue, even outside of normal business hours.</p><h4>Key Benefits:</h4><ul><li>Capture bookings from international markets at any time.</li><li>Expand your operational window without increasing staff hours.</li><li>Provide a convenient and flexible booking experience for all customers.</li></ul>"
+            },
+            'guest-fewer-abandoned': {
+                title: "Insight: Fewer Abandoned Carts, More Confirmed Bookings",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>A complicated checkout process is the leading cause of abandoned bookings. Zaui's modern, streamlined checkout flow is designed to be intuitive and fast, reducing friction for your customers. This translates directly to a higher conversion rate, meaning more of your website visitors become paying customers and your revenue potential is fully realized.</p><h4>Key Benefits:</h4><ul><li>Boost your conversion rates with a user-friendly checkout process.</li><li>Reduce the number of lost sales from abandoned carts.</li><li>Provide a simple and enjoyable booking experience for your passengers.</li></ul>"
+            },
+            'guest-5-star-repeat': {
+                title: "Insight: Earn More 5-Star Reviews & Repeat Business",
+                text: "<h4>Why it matters for Thai Seaplane:</h4><p>The combination of seamless booking, automated communication, and efficient operations leads to a superior customer experience. Happy customers are more likely to leave 5-star reviews and, more importantly, become repeat customers. Zaui's tools help foster this loyalty by ensuring every step of the passenger journey is smooth, professional, and memorable, building a strong base of loyal brand advocates.</p><h4>Key Benefits:</h4><ul><li>Create a memorable, premium experience that leads to positive reviews.</li><li>Increase customer loyalty and long-term retention.</li><li>Turn one-time passengers into brand advocates who will book again.</li></ul>"
+            },
+            'revenue': {
+                title: "Revenue Insights for Thai Seaplane",
+                text: "<h4>Revenue Growth Pillars:</h4><p>Zaui's platform helps Thai Seaplane maximize revenue by strategically optimizing pricing, expanding its sales reach, and capitalizing on every booking opportunity.</p><h4>Zaui's Revenue Tools:</h4><ul><li>Dynamic Pricing: Automatically adjusts prices to maximize yield during high demand.</li><li>Global Distribution: Integrates with major OTAs to expose your flights to a worldwide audience.</li><li>Direct Booking Engine: Captures commission-free bookings directly from your website.</li><li>Upsells and Add-ons: Increases average booking value with in-flow promotional offers.</li></ul>"
+            },
+            'efficiency': {
+                title: "Efficiency Insights for Thai Seaplane",
+                text: "<h4>Operational Transformation:</h4><p>Zaui transforms day-to-day operations by replacing manual, time-consuming tasks with intelligent automation and streamlined workflows, allowing your team to work smarter, not harder.</p><h4>Efficiency Drivers:</h4><ul><li>Centralized System: Manages all aspects of the business—from bookings to staff scheduling—in one place.</li><li>Mobile Check-in: Speeds up passenger boarding with mobile app and QR code scanning.</li><li>Automated Communications: Reduces administrative workload by handling confirmations, reminders, and updates automatically.</li><li>Resource Optimization: Prevents double-bookings and ensures optimal use of your seaplane fleet and crew.</li></ul>"
+            },
+            'customer_experience': {
+                title: "Customer Experience Insights for Thai Seaplane",
+                text: "<h4>Elevating Guest Journeys:</h4><p>Zaui helps Thai Seaplane create a seamless, memorable passenger experience from the very first click to the final boarding. The platform’s features are designed to build trust, loyalty, and positive brand perception.</p><h4>Customer-Centric Features:</h4><ul><li>Easy Online Booking: A simple, mobile-friendly checkout process reduces friction and boosts conversion rates.</li><li>Proactive Communication: Automated emails and alerts keep passengers informed about their booking and any changes.</li><li>Review Collection: Follow-up emails encourage positive reviews, enhancing Thai Seaplane's online reputation.</li><li>Self-Serve Portal: Passengers can easily manage their own reservations, reducing the burden on your customer service team.</li></ul>"
+            }
+        };
+
+        const insightsModal = document.getElementById('insightsModal');
+        const modalTitle = insightsModal.querySelector('#modalTitle');
+        const modalText = insightsModal.querySelector('#modalText');
+        const copyInsightsBtn = document.getElementById('copyInsightsBtn');
+
+        function showNotification(message, isError = false) {
+            const notificationModal = document.createElement('div');
+            notificationModal.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[1002]';
+            notificationModal.innerHTML = `
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl border ${isError ? 'border-red-500' : 'border-blue-500'} text-white text-center max-w-sm mx-auto">
+                    <p class="text-lg mb-4">${message}</p>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">OK</button>
+                </div>
+            `;
+            document.body.appendChild(notificationModal);
+            setTimeout(() => {
+                if (notificationModal.parentNode) {
+                    notificationModal.remove();
+                }
+            }, 3000);
+        }
+
+        function showInsightModal(title, content) {
+            modalTitle.textContent = title;
+            modalText.innerHTML = content;
+            copyInsightsBtn.classList.remove('hidden');
+            copyInsightsBtn.onclick = () => copyToClipboard(modalText.innerText);
+            insightsModal.classList.add('show');
+        }
+
+        function hideInsightModal() {
+            insightsModal.classList.remove('show');
+            modalText.innerHTML = '';
+            modalTitle.textContent = '';
+            copyInsightsBtn.classList.add('hidden');
+        }
+
+        insightsModal.querySelector('.close-button').addEventListener('click', hideInsightModal);
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.impact-tile').forEach(tile => {
+                tile.addEventListener('click', () => {
+                    const insightData = insights[tile.dataset.impactType];
+                    if (insightData) {
+                        showInsightModal(insightData.title, insightData.text);
+                    }
+                });
+            });
+
+            document.getElementById('revenueInsightBtn').addEventListener('click', () => {
+                showInsightModal("Revenue Insights for Thai Seaplane", insights.revenue.text);
+            });
+
+            document.getElementById('efficiencyInsightBtn').addEventListener('click', () => {
+                showInsightModal("Efficiency Insights for Thai Seaplane", insights.efficiency.text);
+            });
+
+            document.getElementById('cxInsightBtn').addEventListener('click', () => {
+                showInsightModal("Customer Experience Insights for Thai Seaplane", insights.customer_experience.text);
+            });
+
+            document.querySelectorAll('.case-study-insights-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const title = button.dataset.title;
+                    const insightText = button.dataset.insight;
+                    showInsightModal(title, insightText);
+                });
+            });
+
+            document.querySelectorAll('.blog-insights-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const title = button.dataset.title;
+                    const insightText = button.dataset.insight;
+                    showInsightModal(`Summary for: ${title}`, insightText);
+                });
+            });
+        });
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showNotification('Copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                showNotification('Failed to copy text.', true);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Category filtering logic
+        document.querySelectorAll('.category-filter-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.dataset.category;
+                const sections = document.querySelectorAll('.content-section');
+                const mainContent = document.querySelector('main');
+                sections.forEach(section => {
+                    if (category === 'all' || section.id === category) {
+                        section.classList.remove('hidden-section');
+                    } else {
+                        section.classList.add('hidden-section');
+                    }
+                });
+                mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelectorAll('.category-filter-btn').forEach(btn => {
+                    btn.classList.remove('bg-blue-600');
+                    btn.classList.add('bg-gray-700');
+                });
+                button.classList.remove('bg-gray-700');
+                button.classList.add('bg-blue-600');
+            });
+        });
+
+        // Clickable "What You Can Find on This Page" boxes for scrolling
+        document.querySelectorAll('#what-you-can-find-section [data-target]').forEach(box => {
+            box.addEventListener('click', function() {
+                const targetId = this.dataset.target;
+                const targetElement = document.getElementById(targetId);
+                const allContentButton = document.querySelector('.category-filter-btn[data-category="all"]');
+
+                if (targetElement && allContentButton) {
+                    allContentButton.click();
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const filterButton = document.querySelector(`.category-filter-btn[data-category="${targetId}"]`);
+                        if (filterButton) {
+                            document.querySelectorAll('.category-filter-btn').forEach(btn => {
+                                btn.classList.remove('bg-blue-600');
+                                btn.classList.add('bg-gray-700');
+                            });
+                            filterButton.classList.remove('bg-gray-700');
+                            filterButton.classList.add('bg-blue-600');
+                        }
+                    }, 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
